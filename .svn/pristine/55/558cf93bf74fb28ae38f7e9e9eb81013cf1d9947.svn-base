@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+	
+	
+<sqlMap namespace="member">
+<select id="idSearch" parameterClass="String" resultClass="String">
+	select mem_id from member where mem_id = #data#
+</select>
+
+
+<!-- 저장하기 -->
+<insert id="insertMember" parameterClass="memberVO">
+	insert into member(mem_id,
+						mem_nickname,
+						mem_email,
+						mem_tel,
+						mem_bir,
+						mem_add,
+						mem_pass,
+						mem_name    
+				        )       
+			values(#mem_id#,  
+					#mem_nickname#,  
+					#mem_email#,  
+					#mem_tel#,  
+					#mem_bir#,  
+					#mem_add#,   
+					#mem_pass#,  
+					#mem_name#  
+					)
+	
+	<!-- result값 만들기 -->
+	<selectKey keyProperty="mem_id" resultClass="string">
+		select mem_id from member where mem_id=#mem_id#
+	</selectKey>
+</insert>
+
+	
+	 
+	<delete id="deleteMember" parameterClass="String">
+		DELETE FROM MEMBER 
+			WHERE MEM_ID=#mem_id#
+	</delete>
+	
+	<update id="updateMember" parameterClass="memberVo">
+		UPDATE MEMBER 
+			SET MEM_NICKNAME=#mem_nickname#,
+				MEM_PASS=#mem_pass#,
+				MEM_EMAIL=#mem_email#,
+				MEM_TEL=#mem_tel#,
+				MEM_ADD=#mem_add#,
+				MEM_NAME=#mem_name#
+		  WHERE MEM_ID=#mem_id#
+	</update>
+	
+	<select id="getMember" parameterClass="memberVO" resultClass="memberVO">	
+		SELECT * FROM MEMBER 
+			WHERE MEM_ID = #mem_id#
+	</select>
+
+
+<select id="login" parameterClass="memberVO" resultClass="memberVO">
+	select * from member where mem_id = #mem_id# and mem_pass = #mem_pass#
+</select>
+
+
+<select id="searchId" parameterClass="memberVO" resultClass="memberVO">
+	select mem_id from member where mem_name = #mem_name# and mem_email = #mem_email#
+</select>
+
+<select id="searchPass" parameterClass="memberVO" resultClass="int">
+	select count(*) from member where mem_id = #mem_id# and mem_email = #mem_email#
+</select>
+
+<update id="updatePass" parameterClass="memberVO">
+  update member set mem_pass = #mem_pass# where mem_email = #mem_email#
+</update>
+
+
+
+
+
+</sqlMap>

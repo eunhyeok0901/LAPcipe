@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 이 문서는 iBatis에서 처리할 SQL문을 작성하는 문서입니다.. -->
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="recipe">
+	
+<!-- <typeAlias>는 이 곳에서 등록할 수도 있다.  -->
+	<insert id="insertRecipe" parameterClass="recipevo">
+		insert into recipe values(recipe_seq.nextval, #rec_name#, #rec_con#, #rec_video#, #rec_car#, 0)
+	</insert>
+	
+	<select id="getAllRecipe" resultClass="recipevo">
+		select * from recipe
+	</select>
+	
+	
+	
+	
+	<select id="getOneRecipe" parameterClass="int" resultClass="recipevo">
+		select * from recipe
+		where rec_no = #rec_no#
+	</select>
+	
+	<select id="getSomeRecipe1" parameterClass="map" resultClass="recipevo">
+		select * from recipe
+		where rec_name like '%'||#searchWord#||'%'
+	</select>
+
+	<select id="getSomeRecipe2" parameterClass="map" resultClass="recipevo">
+		select * from recipe 
+		where rec_name like '%'||#searchWord#||'%'
+		and rec_car = #searchCategory#
+	</select>
+	
+	<update id="plusCount" parameterClass="int">
+		update recipe set rec_count = rec_count + 1
+		where rec_no = #rec_no#
+	</update>
+	
+	<select id="getRecipeByCount" resultClass="recipevo">
+		select * from recipe 
+		order by rec_count desc
+	</select>
+	
+	<!-- 아래부터는 페이징처리를 위해 새롭게 만든 쿼리문들 -->
+	<select id="getAllRecipeForPaging" parameterClass="map" resultClass="recipevo">
+		select * from (
+    select tb.*, rownum rNum from(
+        select * from recipe
+        order by rec_no desc
+        ) tb
+     )
+    where rNum between #start# and #end#
+	</select>
+	
+	<select id="getAllRecipeCount" resultClass="int">
+		select count(*) from recipe
+	</select>
+	
+	<select id="searchTag" resultClass="recipevo" parameterClass="map">
+		select * from (
+       select tb.*, rownum rNum from(    
+          select
+                b.rec_no, 
+		       b.rec_name,  
+		       b.rec_con, 
+		       b.rec_video,
+		       b.rec_car,
+		       b.rec_count
+		  from tag a, recipe b		
+         where a.rec_no = b.rec_no
+		   and a.tag_name like '%'||#tag_name#||'%'
+          order by 1 desc ) tb
+        )
+        where rNum between #start# and #end#	
+	</select>
+	
+	<select id="searchTagCount" resultClass="int" parameterClass="map">
+		select count(*) from (select b.rec_no, 
+		       b.rec_name,  
+		       b.rec_con, 
+		       b.rec_video,
+		       b.rec_car,
+		       b.rec_count
+		  from tag a, recipe b
+		
+         where a.rec_no = b.rec_no
+		   and a.tag_name like '%'||#tag_name#||'%') tb
+	</select>
+	
+	<select id="searchRecipe" parameterClass="map" resultClass="recipevo">
+		select * from (
+    select tb.*, rownum rNum from(
+        select * from recipe
+    where rec_name like '%'||#searchword#||'%' or rec_car like '%'||#searchword#||'%'
+		or rec_con like '%'||#searchword#||'%'
+        order by rec_no desc) tb
+        )
+        where rNum between #start# and #end#
+	</select>
+	
+	<select id="searchRecipeCount" parameterClass="map" resultClass="int">
+		select count(*) from recipe where rec_name like '%'||#searchword#||'%' or rec_car like '%'||#searchword#||'%'
+		or rec_con like '%'||#searchword#||'%'
+	</select>
+	
+</sqlMap>

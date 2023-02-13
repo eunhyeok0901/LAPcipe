@@ -1,0 +1,824 @@
+<%@page import="java.util.HashMap"%>
+<%@page import="java.util.Map"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    <%@include file ="/view/header1.jsp" %>  
+    
+    
+<!-- <!DOCTYPE html> -->
+<!-- <html> -->
+<!-- <head> -->
+<!-- <meta charset="UTF-8"> -->
+
+ <title>Lapcipe</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+    
+    
+    /*     //글씨체 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR&display=swap');
+	
+	*{
+	font-family: 'Noto Serif KR', serif;
+	color: #4f4f4f;
+/* 	글씨색 */
+	
+	}
+	
+	
+/*      *{  */
+/*     background-color: #faf8f0; */
+/*     }  */
+   
+      .navbar{
+
+        background-color: white;
+        border : 1px solid white;
+      }
+ 
+        /* Remove the navbar's default margin-bottom and rounded borders */ 
+      .navbar {
+        margin-bottom: 0;
+        border-radius: 0;
+      }
+      
+      /* Add a gray background color and some padding to the footer */
+        footer {
+        background-color: #f2f2f2;
+        padding: 25px;
+      }
+
+
+      
+      aside, main{
+         border: 1px solid #faf8f0;
+         height: 500px;
+         margin : 5px;
+      }
+      
+      .mycate{
+         text-align: center;
+         margin: 30px;
+      }
+      
+/*       *{ */
+/*       background: #FFFFDC; */
+/*       } */
+      
+      .mydata{
+      	cursor : pointer;
+      }
+      
+      
+/*  별점 */
+
+
+.star-rating {
+  display: flex;
+  flex-direction: row-reverse;
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  justify-content: space-around;
+  padding: 0 0.2em;
+  text-align: center;
+  width: 5em;
+}
+ 
+.star-rating input {
+  display: none;
+}
+ 
+.star-rating label {
+  -webkit-text-fill-color: transparent; /* Will override color (regardless of order) */
+  -webkit-text-stroke-width: 2.3px;
+  -webkit-text-stroke-color: #2b2a29;
+  cursor: pointer;
+}
+ 
+.star-rating :checked ~ label {
+  -webkit-text-fill-color: gold;
+}
+ 
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+  -webkit-text-fill-color: #fff58
+ } 
+  
+  
+/*   별점 */
+
+.card{
+	width : 1000px;
+	height : 100px;
+	cursor : pointer;
+}
+
+.card-body {
+	display : inline-block;
+/* 	text-align: left; */
+	width: 500px;
+}
+
+.card-img-top{
+	margin-bottom : 5px;
+	width : 100px;
+	height : 100px;
+	vertical-align : top;
+	margin-right : 8px;
+} 
+
+.card-title{
+	display : inline-block;
+	margin : 0px;
+	width : 500px;
+	font-weight : bold;
+}
+
+.card-text{
+	display : inline-block;
+	margin : 0px;
+}
+
+#youngho_helper{
+/* 	border : 1px solid black; */
+/* 	margin-bottom : 5px; */
+	border : 1px solid lightgrey;
+	margin-top : 4px;
+	margin-bottom : 4px;
+}
+
+
+   </style>
+   
+   <script>
+   
+//  function disabledButton(){
+// 	 //강의평가하기 버튼 무력화
+// 	 //내아이디+클래스번호 => 리뷰개수 1개 이상 =>attr(disabeld)
+	 
+	 
+	 
+	 
+//  }
+   
+ 
+   reviewcount=0;
+   function countReview(myid,no){
+	 //강의평가하기 버튼 무력화
+	//내아이디+클래스번호 => 리뷰개수 1개 이상 =>attr(disabeld)
+	
+		
+	   myid = '<%= (String)session.getAttribute("loginMember") %>';
+
+	   $.ajax({
+		   
+ 			url : '/rps_mpro/CountReview.do',
+ 			type : 'post',
+ 			data : {"myid":myid,
+					"no":no},
+			success : function(res){
+				
+<%-- 				count = <%=request.getAttribute("count")%>; --%>
+				console.log(res.count)
+				
+				
+				if(res.count > 0){
+					alert("이미 리뷰를 등록하셨습니다")
+					$('#estimate').attr('disabled',true);
+					$('.modal-header h4').text("등록한 리뷰");
+					$('.modal-body').empty().append
+					
+				}else{
+					alert("리뷰창띄우기")
+				}
+				
+			},
+			error : function(xhr){
+				alert("리뷰카운트에러 : " + xhr.status)
+				
+			},
+			dataType : 'json'
+	   })
+	   
+	   
+	   
+   }
+ 
+	
+   function getReviewCon(myid,no){
+	   
+	   var score="";
+	   $.ajax({
+		   
+  			url : '/rps_mpro/GetReviewCon.do',
+  			type : 'post',
+  			data : {"myid":myid,
+  					"no":no},
+  			success : function(res){
+  				con="";
+  				$.each(res,function(i,v){
+  					con += v.crev_con
+  					score+=v.crev_score
+  				})
+  				
+//   				for(var i=0; i<score; i++){
+//   					if(i<2){
+//   						score += "★";
+//   					}
+  				$('#conModal .modal-title').text("별점")
+  				$('#conModal .modal-body').find('p').text(con)
+  				
+  				textArea = '<p><textarea cols="50" rows="10"></textarea></p>'
+  				$('.modal-footer #modify').on('click',function(){
+  					$(this).parents('.modal-body').find('p').empty();
+  					})
+  				
+  				
+  				
+  			},
+  			error : function(xhr){
+  				alert("리뷰내용 : " + xhr.status)
+  			},
+  			dataType : 'json'
+	   })
+  			
+	   
+   }
+   
+   
+   
+   function insertReview(text,score,myid,no){
+	   
+	   $.ajax({
+		   
+  			url : '/rps_mpro/InsertReview.do',
+  			type : 'post',
+  			data : {"text" : text,
+  					"score":score,
+  					"myid":myid,
+  					"no":no},
+  			success : function(res){
+// 				countReview(myid,no);
+				alert("소중한 후기 감사합니다.") 
+				//등록 완료했음
+				//이거의 res
+				
+				//후기 수정하기 버튼으로 변경 
+// 				newBtn ="<button id='edit' data-toggle='modal' data-target='#confirmModal'>리뷰 확인하기</button>"// 				var newBtn = document.createElement('button');
+// 				newBtn = "<a data-toggle='modal' data-target='#confirmModal'>리뷰확인</a>"
+
+// 				newBtn.idName = 'edit';
+// 				newBtn.data-toggle = 'modal';
+// 				newBtn.data-target = '#myModal';
+				//.append(newBtn)
+// 				var parent = $('#estimate').parent();
+				
+// 				$('#estimate').remove();
+				
+// 				parent.append(newBtn);
+// 				//.parent('td').append(newBtn)
+
+			newBtn ="<button id='myReview'>리뷰 확인하기</button>" 
+// 			newBtn =" <button type='button' class='btn btn-info btn-lg' data-toggle='modal' data-target=''#myModal'>Open Modal</button>" 				
+
+// 			//////////////////////////////////////////
+// 			$('#estimate').parent().append(newBtn);
+// 			$('#estimate').remove()
+			
+// // 			document.getElementById('estimate').disabled="true";
+// 			$('#estimate').next().append(newBtn);
+			
+// 			$('#myReview').on('click',function(){
+// 				$('#conModal').modal();
+// 				getReviewCon(myid,no);
+// 			})//리뷰확인하기 모달 띄움 -> 작성한 리뷰 내용 가져오기
+// 			//////////////////////////////////////////
+
+				
+		
+  		
+  			},
+  			error : function(xhr){
+  				alert(xhr.status)
+  			},
+  			dataType:'text'
+	   })
+	   
+   }
+	   
+	   
+   var no=0;
+   var text="";
+   var score=0;
+   var myid="";
+  
+	$(document).on('click','#estimate', function(){
+		//평가하기 버튼 누름
+		title = $(this).parents('.titletr').find('.class_title').text();
+		//제목 가져욤
+		classNo = $(this).parents('.titletr').find('.class_num').text();
+// 		alert(classNo);
+		no=classNo.replace(/[^0-9]/g,'');
+		//클래스 숫자만 뽑아옴
+// 		alert(no  + myid);
+		
+		//리뷰카운트해서 1개 이상이면 이미 등록했다/ 아니다 알려주기
+		countReview(myid,no)
+		
+		
+		
+		
+		
+		$('.btn-submit').on('click',function(){
+			
+			//강의 평가 내용
+			text=$(this).parents('.modal-body').find('textarea').val()
+			//별점
+			score=$(this).parents('.modal-body').find('input[name="rating"]:checked').val();
+			//회원아이디
+			 myid = '<%= (String)session.getAttribute("loginMember") %>';
+
+			
+			insertReview(text,score,myid,no)//강의 리뷰 등록
+		})
+		
+		
+	})
+
+   
+//  	
+	$(document).on('click','#playclass', function(){
+		
+		
+		classTitle = $(this).parent('td').prev().text();
+// 		alert(classTitle)
+		   $.ajax({
+			   
+	   			url : '/rps_mpro/GetUrl.do',
+	   			type : 'post',
+	   			data : {"classTitle" : classTitle},
+	   			success : function(res){
+// 	   				console.log(res)//url따왔음
+				var openNewWindow = window.open("about:blank");
+				openNewWindow.location.href = res
+	   				
+	   				
+	   			},
+	   			error : function(xhr){
+	   				alert(xhr.status)
+
+	   				
+	   			},
+	   			dataType : 'text'
+		   })
+	   				
+		
+		
+	})
+	
+	
+	/////////////////수정중
+	function showMyclass(){
+		
+		   myid = '<%= (String)session.getAttribute("loginMember") %>';
+		   //아이디 가져옴 확인
+		   
+		   $.ajax({
+			   
+	   			url : '/rps_mpro/RegisteredClass.do',
+	   			type : 'post',
+	   			data : {"id" : myid},
+	   			success : function(res){
+	   				
+	   				
+	   				code = "<table class='table'><tr><td colspan='4' style='font-size : 15px; font-weight:bolder;'>나의 클래스</td>"
+	   				$.each(res,function(i,v){
+	   					
+	   					
+	   					code+="<tr class='titletr'><td class='class_num'>classNo_"+v.class_no+"</td><td class='class_title'>"+v.class_title+"</td><td><button id='playclass'>강의 바로가기</button></td><td><button id='estimate' data-toggle='modal' data-target='#myModal' >강의 평가하기</button></td></tr>"
+	   				})
+	   				
+	   				code +="</table>"
+	   					
+	   				//그리기	
+	   				$('.containerpage').html(code);
+	   					
+	   				
+// 	   				//버튼무력화
+// 	   				countReview(id,no);
+	   				
+	   				
+	   				
+	   					
+	   			},
+	   			error : function(xhr){
+	   				alert("마이페이지 : " + xhr.status)
+	   				
+	   			},
+	   			dataType : 'json'
+		
+	   			})
+		
+		
+		
+	}
+
+
+
+
+
+
+   function showMyRecipe(){
+	   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	   // 세션영역에 저장되있다고 가정 아래 코드 두 줄은 추후 삭제 해야됨!!!!!!! 
+	   myid = '<%= (String)session.getAttribute("loginMember") %>';
+		// ---------------------------------------------------------------------	  	
+   		$.ajax({
+   			url : '/rps_mpro/GetMyRecipe.do',
+   			type : 'get',
+   			data : {id : myid},
+   			success : function(res){
+   				
+   				
+   				console.log(res);
+   				if(res.flag == 'false'){
+   					// 등록한 레시피가 없다는 문구를 출력함 
+   					$('.containerpage').html('<h4>등록한 레시피가 없습니다</h4>');
+   				}else {
+   					// $.each로 레시피 목록들을 조회하여 화면에 출력시킴 
+// 					const parent = document.createElement('div');
+					postrecipe = '';
+   					$.each(res, function(i,v){
+   						
+   						// 만들 코드 예시 
+   							console.log('인덱스체크 : '+i);
+//    						postrecipe += '<a href="/rps_mpro/ViewDetail.do?rec_no='+v.rec_no+'"><img src="/rps_mpro/ImageViewController.do?fileName='+v.rec_video+'" width=100 height=100></a> <div></div>'+
+//    	   						v.rec_name;
+   							postrecipe += '<div class="card" id="/rps_mpro/ViewDetail.do?rec_no='+v.rec_no+'" onclick="recipedetail(this)">';
+   							postrecipe += '<img class="card-img-top img-rounded" src="/rps_mpro/ImageViewController.do?fileName='+v.rec_video+'">';
+   							postrecipe += '<div class="card-body">';
+   							postrecipe += '<h4 class="card-title">'+v.rec_name+'</h4><br>';
+   							postrecipe += '<p class="card-text">'+v.rec_con+"</p>";
+   							postrecipe += '</div>'
+   							postrecipe += '</div>'
+   							if(i != res.length - 1){
+   									postrecipe += '<div id="youngho_helper"></div>';
+   								}
+   							
+   					})
+ 	   					
+ 	   					
+ 	   					$('.containerpage').html(postrecipe);
+   						
+//  	   				clickcheck1 = false;
+   				}
+   				
+   			},
+   			error : function(xhr){
+   				alert('상태 : ' + xhr.status);
+   			},
+   			dataType : 'json'
+   		})		
+   }
+   
+   function showMyWhishList(){
+	   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	   // 세션영역에 저장되있다고 가정 아래 코드 두 줄은 추후 삭제 해야됨!!!!!!! 
+	   myid = '<%= (String)session.getAttribute("loginMember") %>';
+		// ---------------------------------------------------------------------	  	
+   		$.ajax({
+   			url : '/rps_mpro/GetMyWhishList.do',
+   			type : 'get',
+   			data : {id : myid},
+   			success : function(res){
+   				
+   				
+   				console.log(res);
+   				if(res.flag == 'false'){
+   					// 등록한 레시피가 없다는 문구를 출력함 
+   					$('.containerpage').html('<h4>찜한 레시피가 없습니다</h4>');
+   				}else {
+   					// $.each로 레시피 목록들을 조회하여 화면에 출력시킴 
+					postrecipe = '';
+   					$.each(res, function(i,v){
+   						
+   						// 만들 코드 예시 
+   						
+   						postrecipe += '<div class="card" id="/rps_mpro/ViewDetail.do?rec_no='+v.rec_no+'" onclick="recipedetail(this)">';
+							postrecipe += '<img class="card-img-top img-rounded" src="/rps_mpro/ImageViewController.do?fileName='+v.rec_video+'">';
+							postrecipe += '<div class="card-body">';
+							postrecipe += '<h4 class="card-title">'+v.rec_name+'</h4><br>';
+							postrecipe += '<p class="card-text">'+v.rec_con+"</p>";
+							postrecipe += '</div>'
+							postrecipe += '</div>'
+								if(i != res.length - 1){
+   									postrecipe += '<div id="youngho_helper"></div>';
+   								}
+   					})
+ 	   					$('.containerpage').html(postrecipe);
+   						
+   				}
+   				
+   			},
+   			error : function(xhr){
+   				alert('상태 : ' + xhr.status);
+   			},
+   			dataType : 'json'
+   		})		
+   }
+   
+   
+   function showMyReview(){
+	      // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	      // 세션영역에 저장되있다고 가정 아래 코드 두 줄은 추후 삭제 해야됨!!!!!!! 
+	      myid = '<%= (String)session.getAttribute("loginMember") %>';
+	      // ---------------------------------------------------------------------   
+	      // ---------------------------------------------------------------------   
+	     
+	      
+	      $.ajax({
+	           url : '/rps_mpro/GetMyReview.do',
+	           type : 'get',
+	           data : {id : myid},
+	           success : function(res){
+	              ratingOptions = ["☆☆☆☆☆","★☆☆☆☆","★★☆☆☆","★★★☆☆","★★★★☆","★★★★★"];
+	              
+	              console.log(res);
+	              if(res.flag == 'false'){
+	                 $('.containerpage').html('<h4>등록한 후기가 없습니다</h4>');
+	              }else {
+	               const parent = document.createElement('div');
+	               myreview = '';
+	                 $.each(res, function(i,v){
+	                    
+	                    // 만들 코드 예시 
+	                    
+	                    myreview += '<div style="cursor:pointer;" class="media border p-3" id="/rps_mpro/ViewDetail.do?rec_no='+v.rec_no+'" onclick="recipedetail(this)" >';
+	                    myreview += '<div style="border: 1px solid lightgrey;">';
+	                    myreview += '</div><br> ';
+	                    myreview += '<span style="font-weight:bold;"> 레시피 제목 : '+v.rec_name+'</span> <br><br>';
+	                    myreview += '<span>'+v.rrev_date+'</span> ';
+	                    myreview += '<span>'+ratingOptions[v.rrev_score]+'</span> <br>';
+	                    myreview += '<span>'+v.rrev_con+'</span> <br>';
+	                                        
+	                    myreview += '</div> ';                    
+	                 })
+	                     $(parent).html(myreview);
+	                     
+	                     $('.containerpage').html($(parent));
+	                    
+	              }
+	              
+	           },
+	           error : function(xhr){
+	              alert('상태 : ' + xhr.status);
+	           },
+	           dataType : 'json'
+	        })            
+	   }
+	   
+   
+   function showMyNote(){
+	   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	   // 세션영역에 저장되있다고 가정 아래 코드 두 줄은 추후 삭제 해야됨!!!!!!! 
+	   myid = '<%= (String)session.getAttribute("myid") %>';
+		// ---------------------------------------------------------------------	  	
+   		$.ajax({
+   			url : '/rps_mpro/GetMyRecipeNote.do',
+   			type : 'get',
+   			data : {id : myid},
+   			success : function(res){
+   				
+   				
+   				console.log(res);
+   				if(res.flag == 'false'){
+   					// 등록한 레시피가 없다는 문구를 출력함 
+   					$('.containerpage').html('<h4>등록한 레시피가 없습니다</h4>');
+   				}else {
+   					// $.each로 레시피 목록들을 조회하여 화면에 출력시킴 
+   					const grandparent = document.createElement('div');
+					const parent1 = document.createElement('div');
+					const parent2 = document.createElement('div');
+					recipeinfo = '';
+   					recipenote = '';
+   					$.each(res.list1, function(i,v){
+   						
+   						recipeinfo += '<a href="/rps_mpro/ViewDetail.do?rec_no='+v.rec_no+'"><img src="/rps_mpro/ImageViewController.do?fileName='+v.rec_video+'" width=100 height=100></a> <div></div>'+
+   	   						v.rec_name;
+   					})
+ 	   					$(parent1).html(recipeinfo);
+ 	   					
+ 	   					$(grandparent).append($(parent1));
+   					
+ 	   				$.each(res.list2, function(i,v){
+ 	   					
+ 	   					recipenote += '<span>'+v.note_date+'</span><br>';
+ 	   					recipenote += '<span>'+v.note_con+'</span>';
+ 	   					
+ 	   				})
+	   				
+ 	   				$(parent2).html(recipenote);
+ 	   				$(grandparent).append($(parent2));
+ 	   				
+ 	   				$('.containerpage').html($(grandparent));
+   				}
+   				
+   			},
+   			error : function(xhr){
+   				alert('상태 : ' + xhr.status);
+   			},
+   			dataType : 'json'
+   		})		
+   }
+   
+
+	function showUser(){
+		//$('#showUser').show();
+		var htmlIframe = '<iframe id="showUser" src="<%=request.getContextPath()%>/member/memberView.jsp" style="height: 500px; width:100%; border:1; scrolloing:none;"></iframe>';
+		$('.containerpage').html(htmlIframe);
+	}
+   
+   
+	// 레시피 클릭했을 때 상세뷰로 넘어가게 하는 함수 
+	function recipedetail(a){
+		b = a.getAttribute('id');
+		console.log(b);
+		location.href = b;
+	}
+   
+   </script>
+   
+   
+   <body>
+<!-- 
+ <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+  
+ 
+         <a class="navbar-brand" href="#">HOME</a>   
+
+      
+
+      
+      
+        <ul class="nav navbar-nav navbar-right">
+            <li ><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Recipe</a></li>
+            <li><a href="#">Notice</a></li>
+            
+          <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+          <li><a href="#"><span class="glyphicon glyphicon-plus "></span> Join</a></li>
+          
+        </ul>
+    </div>
+  </nav>
+  
+  
+ -->
+  
+  
+  
+  
+<!--   </div> -->
+<div class="mainBack" style="height: 1200px; padding : 20px; background-color: #faf8f0;">
+
+  <div style="height: auto;">
+  <aside style="float: left; width: 20%; height: 100%; margin-left: 70px;">
+  <div>
+  
+  <div class="mycate"><span style="font-size: 1.2em; font-weight: bolder;" class="mydata" onclick="showMyRecipe()">등록한 레시피</span></div>
+  <div class="mycate"><span style="font-size: 1.2em; font-weight: bolder;"class="mydata" onclick="showMyWhishList()">찜한 레시피</span></div> 
+  <div class="mycate"><span style="font-size: 1.2em; font-weight: bolder;"class="mydata" onclick="showMyReview()">나의 요리후기</span></div>
+<!--   <div class="mycate"><span class="mydata" onclick="showMyNote()">나의 레시피노트</span></div> -->
+  <div class="mycate"><span style="font-size: 1.2em; font-weight: bolder;"class="mydata" onclick="showMyclass()">나의 클래스</span></div>
+
+  <div class="mycate"><span style="font-size: 1.2em; font-weight: bolder;"class="mydata" onclick="showUser()">내 정보</span></div>
+ 
+  
+
+  
+  </div>
+  </aside>
+  </div>
+
+  
+  
+  
+  
+  
+  <div style="float: right; width: 60%; height: auto; margin-right: 150px;" >
+  	<div style="border: 2px solid #faf8f0; ">
+  	<h4 style="font-weight: bolder;"><span style="margin-bottom : 10px;  font-size: 1.5em;" class="glyphicon glyphicon-user	
+  	">&nbsp;</span><%= (String)session.getAttribute("loginMember") %>님의 마이페이지입니다.</h4>
+  	<div style="border : 1px solid gray; margin-bottom: 10px;"></div>
+  	
+  	</div>
+     <div style="padding : 10px; border : 1px solid #faf8f0;"class="containerpage" style="height: auto;">
+<!--      <span class="glyphicon glyphicon-user"></span> -->
+     
+     
+     </div>
+  </div>
+   
+
+
+</div>
+
+
+<!-- 모달 강의 평가 -->
+
+
+ <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">강의 평가</h4>
+        </div>
+        <div class="modal-body">
+        
+            <form>
+		      <p><textarea cols="50" rows="10"></textarea></p>
+<!-- 		      <p><input type="submit" value="Submit"></p> -->
+		    </form>
+<!-- 		별점     -->
+		    <div class="star-rating space-x-4 mx-auto">
+				<input type="radio" id="5-stars" name="rating" value="5" v-model="ratings"/>
+				<label for="5-stars" class="star pr-4">★</label>
+				<input type="radio" id="4-stars" name="rating" value="4" v-model="ratings"/>
+				<label for="4-stars" class="star">★</label>
+				<input type="radio" id="3-stars" name="rating" value="3" v-model="ratings"/>
+				<label for="3-stars" class="star">★</label>
+				<input type="radio" id="2-stars" name="rating" value="2" v-model="ratings"/>
+				<label for="2-stars" class="star">★</label>
+				<input type="radio" id="1-star" name="rating" value="1" v-model="ratings" />
+				<label for="1-star" class="star">★</label>
+			</div>
+<!-- 별점 -->
+	<div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-submit" data-dismiss="modal">Submit</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+ </div> 
+  
+  
+<!--   모달 -->
+
+
+
+<!-- 리뷰확인모달 -->
+
+  <div class="modal fade" id="conModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header</h4>
+        </div>
+        <div class="modal-body">
+          <p>Some text in the modal.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" id="modify">Modify</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+  
+<!--   모달 -->
+
+
+</body>
+
+<!--   <footer class="contain-fluid text-center"> -->
+<!--     <p> -->
+<!--     기관명 : (재)대덕인재개발원이사장 : 김형응주소 : 대전광역시 중구 계룡로 846, 3-4층<br> -->
+<!--    사업자등록번호 : 306-82-05291대표전화 : 042-222-8202팩스 : 070-8768-2972<br> -->
+<!--    COPYRIGHT © 2020 (재)대덕인재개발원 ALL RIGHTS RESERVED<br> -->
+    
+<!--     </p> -->
+<!--   </footer> -->
+
+</html>

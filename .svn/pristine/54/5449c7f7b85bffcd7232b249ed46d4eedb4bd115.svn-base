@@ -1,0 +1,99 @@
+<%@page import="bps.member.vo.MemberVO"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+
+<title>회원정보 수정</title>
+
+<style type="text/css">
+	table, tr, td { border:1px solid black; border-collapse: collapse; }
+	td { padding:5px;}
+</style>
+
+<script src="../js/jquery-3.6.1.min.js"></script>
+
+
+<%
+MemberVO memVo = (MemberVO)session.getAttribute("loginMemberVO");
+%>
+
+
+<script>
+$(function(){
+	
+	$('#cancleUpdate').on('click', function(){
+		location.href = "<%=request.getContextPath()%>/member/memberView.jsp";
+	})
+	
+})	
+
+</script>
+
+
+
+</head>
+
+<body>
+
+
+
+<%if(memVo != null){
+ %>
+
+<h2>회원정보 수정</h2>
+
+<form action="<%=request.getContextPath()%>/memberUpdate.do" method="get" enctype="multipart/form-data">
+
+	<input type="hidden" name="mem_id" value="<%=memVo.getMem_id()%>">
+<table border="1">
+<tbody>
+	<tr>
+		<td>아이디</td>
+		<td><%=memVo.getMem_id()%></td>
+	</tr>
+	<tr>
+		<td>비밀번호</td>
+		<td><input type="password" name="mem_pass" value="<%=memVo.getMem_pass()%>"></td>
+	</tr>
+	<tr>
+		<td>이름</td>
+		<td><input type="text" name="mem_name" value="<%=memVo.getMem_name()%>"></td>
+	</tr>
+	<tr>
+		<td>닉네임</td>
+		<td><input type="text" name="mem_nickname" value="<%=memVo.getMem_nickname()%>"></td>
+	</tr>
+	<tr>
+		<td>전화번호</td>
+		<td><input type="text" name="mem_tel" value="<%=memVo.getMem_tel()%>"></td>
+	</tr>
+	<tr>
+		<td>주소</td>
+		<td><input type="text" name="mem_add" value="<%=memVo.getMem_add()%>"></td>
+	</tr>
+	<tr>
+		<td>이메일</td>
+		<td><input type="text" name="mem_email" value="<%=memVo.getMem_email()%>"></td>
+	</tr>
+	<tr>
+		<td colspan="2" style="text-align:center;">
+			<input type="submit" id="update" value="저장">
+			<input type="reset" value="초기화">
+			<input type="button" id="cancleUpdate" value="취소">
+		</td>
+	</tr>
+</tbody>
+</table>
+</form>
+
+
+
+<%} %>
+
+
+
+</body>
+</html>

@@ -1,0 +1,107 @@
+package bps.classreview.dao;
+
+import java.sql.SQLException;
+import java.util.List;
+
+import com.ibatis.sqlmap.client.SqlMapClient;
+
+import bps.classreview.vo.ClassReviewVO;
+import bps.classreview.vo.ReviewVO;
+import bps.util.SqlMapClientFactory;
+
+public class ClassReviewDaoImpl implements IClassReviewDao {
+
+	
+	private SqlMapClient client;
+	private static IClassReviewDao dao;
+	
+	public ClassReviewDaoImpl() {
+		client = SqlMapClientFactory.getSqlMapClient();
+		
+	}
+	
+	public static IClassReviewDao getDao() {
+		if (dao == null) {
+			dao = new ClassReviewDaoImpl();
+		}return dao;
+		
+	}
+
+	@Override
+	public List<ClassReviewVO> getReview(int class_no) {
+		
+		List<ClassReviewVO> list = null;
+		
+		try {
+			list = client.queryForList("classreview.getReview",class_no);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	@Override
+	public List<ReviewVO> registerClass(String mem_id) {
+		List<ReviewVO> list = null;
+		
+		try {
+			list = client.queryForList("classreview.registerClass",mem_id);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
+
+	@Override
+	public int insertReview(ClassReviewVO vo) {
+		int count = 0;
+		
+		try {
+			count = client.update("classreview.insertReview",vo);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return count;
+	}
+
+	@Override
+	public int countReview(ClassReviewVO vo) {
+		
+		int count = 0;
+		
+		try {
+			count = (int)client.queryForObject("classreview.countReview",vo);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return count;
+	}
+
+	@Override
+	public List<ClassReviewVO> getReviewCon(ClassReviewVO vo) {
+		List<ClassReviewVO> list = null;
+		
+		try {
+			list = client.queryForList("classreview.getReviewCon",vo);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
+
+
+
+
+
+
+	
+	
+	
+}

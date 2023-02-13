@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="curriculum">
+	
+
+	<select id="getCurri" parameterClass="int" resultClass="curriculumvo">
+	 	select * from curriculum where class_no=#data#
+	</select>
+	
+	<select id="getURL" parameterClass="String" resultClass="String">
+	
+	 select cur_video
+     from CURRICULUM
+     where class_no = (select class_no
+                        from cookclass
+                        where class_title=#title#)
+	
+	</select>
+</sqlMap>

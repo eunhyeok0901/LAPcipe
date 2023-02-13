@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 이 문서는 iBatis에서 처리할 SQL문을 작성하는 문서입니다.. -->
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="payment">
+<!-- <typeAlias>는 이 곳에서 등록할 수도 있다.  -->
+	<select id="getAllPayment" resultClass="paymentvo">
+	select * from payment
+	</select>
+	
+	<select id="getClassone" parameterClass="int" resultClass="cookclassvo">
+	select * from cookclass where class_no = #class_no# 
+	</select>
+	
+<!-- 	<insert id="insertBuyed" parameterClass="buyedclassvo"> -->
+<!-- 		<selectKey keyProperty="id" resultClass="int"> -->
+<!-- 			select buyed_seq.currval as id from dual  -->
+<!-- 		</selectKey> -->
+<!-- 		insert into buyedclass values(buyed_seq.nextval, #mem_id#, #class_no#) -->
+<!-- 	</insert> -->
+	<update id="insertBuyed" parameterClass="buyedclassvo">
+	
+	insert into buyedclass(BUYED_NO,MEM_ID,CLASS_NO) values(buyed_seq.nextval, #mem_id#,#class_no#)
+		  		       
+	</update>
+	<update id="insertPay" parameterClass="paymentvo">
+	
+	insert into payment(PAY_NO,BUYED_NO,PAYWAY,PAY_COST,PAY_DATE) 
+	values(payed_seq.nextval,#buyed_no#,#payway#,#pay_cost#,sysdate)
+		  		       
+	</update>
+	
+	<select id="getBuySeq" resultClass="int">
+	select max(buyed_no) from buyedclass
+	</select>
+	
+	<select id="getClassPay" parameterClass="string" resultClass="buyedclassvo">
+	select max(buyed_no)buyed_no, mem_id,max(class_no) class_no from buyedclass where mem_id = #mem_id#
+	group by mem_id 
+	</select>
+	
+	<update id="insertPointResult" parameterClass="string">
+	update member
+	set mem_point = mem_point - (select max(a.pay_cost) from payment a,
+	buyedclass b where a.buyed_no = b.buyed_no
+	and b.mem_id = #data#)
+	where mem_id = #data#
+	</update>
+	
+	<update id="insertMileagePlus" parameterClass="string">
+	update member
+	set mem_point = mem_point + trunc(0.5 * (select max(a.pay_cost) from
+	payment a, buyedclass b where a.buyed_no = b.buyed_no
+	and b.mem_id = #data#),0)
+	where mem_id = #data#
+	</update>
+	
+
+</sqlMap>

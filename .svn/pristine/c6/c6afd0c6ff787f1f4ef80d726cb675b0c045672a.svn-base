@@ -1,0 +1,357 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@include file ="/view/header1.jsp" %> 
+    
+    
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  
+  <script src="../js/board.js"></script>
+  <script src="../js/jquery.serializejson.min.js"></script>
+
+<title>LABcipe 문의게시판</title>
+
+<style>
+body*{
+ background-color: #fbf8f1;
+}
+
+
+
+body *{
+    box-sizing: border-box;
+ }
+
+ .panel-body p{
+    margin: 1px;
+    padding: 2px;
+ }
+ 
+ .p1{
+    width: 60%;
+    float: left;
+ }
+ 
+ .p2{
+    width: 35%;
+    float: right;
+    text-align: right;
+ }
+ 
+ .p3{
+    clear: both;
+ }
+ 
+ input[name=reply]{
+    height: 46px;
+    vertical-align: top;
+ }
+
+ .panel-heading:hover{
+  	background : #ffdda4;
+ }
+ 
+ #stype{
+    box-sizing: border-box;
+    margin : 3px 5px 0px 0px;
+    width: 95px;
+    height : 30px;
+    float: left;
+ }
+ 
+ #sword{
+    box-sizing: border-box;
+    margin : 3px 0px 0px 0px;
+    width: 200px;
+    height : 30px;
+    float: left;
+ }
+ 
+ #search{
+	display : inline-block;
+	float : left;
+	margin : 0px 0px 0px 5px;
+	border : none;
+	padding : 10px 15px;
+	border-radius : 15px;
+	font-family : "paybooc-Light", sans-serif;
+	box-shadow : 0 15px 35px rgba(0, 0, 0, 0.2);
+	text-decoration: none;
+    font-weight: 600;
+    transition: 0.25s;
+    background-color: #ce6d39;
+    color: #ffeee4;
+ }
+ 
+ .navbar{
+    margin-left: 60%;
+ }
+ 
+ #writebtn {
+	display : inline-block;
+	margin : 30px 0px 0px 80px;
+	float : left;
+	border : none;
+	padding : 10px 15px;
+	border-radius : 15px;
+	font-family : "paybooc-Light", sans-serif;
+	box-shadow : 0 15px 35px rgba(0, 0, 0, 0.2);
+	text-decoration: none;
+    font-weight: 600;
+    transition: 0.25s;
+    background-color: #ce6d39;
+    color: #ffeee4;
+ }
+ 
+ h1{
+ 	font-size : 30px;
+ 	color : #333333;
+ 	font-weight : 400;
+    text-align: center;
+ 	margin-top: 5%;
+ }
+ 
+ .pagination{
+    float: left;
+ }
+ 
+ #pagenav{
+    margin-left: 43%;
+ }
+ 
+ label{
+    display: inline-block;
+    width: 100px;
+ }
+ 
+ .rep-body{
+    background: #feebca;
+    border: 1px dotted gray;
+    margin: 2px;
+    padding: 5px;
+ }
+ 
+ #modifyForm{
+ 	display : none;
+ 
+ }
+
+.modal-bottom{
+   width:300px;
+   margin:auto;
+}
+#wsend, #wclose{
+	display : inline-block;
+	margin : 10px 10px 10px 10px;
+	float : center;
+	border : none;
+	padding : 10px 15px;
+	border-radius : 15px;
+	font-family : "paybooc-Light", sans-serif;
+	box-shadow : 0 15px 35px rgba(0, 0, 0, 0.2);
+	text-decoration: none;
+    font-weight: 600;
+    transition: 0.25s;
+    background-color: #ce6d39;
+    color: #ffeee4;
+ }
+ 
+</style>
+
+<script>
+currentPage=1;
+$(function(){
+	listPageServer(1);  //리스트 출력하기 위한 함수호출
+	
+	// 검색 버튼
+	$('#search').on('click', function(){
+		currentPage=1;
+		//page번호, 검색어(sword), 검색기준(stype)
+		listPageServer(currentPage);
+	})
+	
+	// 다음페이지 클릭
+	$('#pagenav').on('click', '.next', function(){
+		currentPage = parseInt($('.pager li').last().text().trim()) + 1;
+		listPageServer(currentPage);
+	})
+	
+	// 이전페이지 클릭
+	$('#pagenav').on('click', '.prev', function(){
+		currentPage = parseInt($('.pager li').first().text().trim() - 1);
+		listPageServer(currentPage);
+	})
+	
+	// 페이지번호 클릭
+	$('#pagenav').on('click', '.pager a', function(){
+		currentPage = parseInt($(this).text().trim());
+		listPageServer(currentPage);
+	})
+   
+   // 글쓰기 모달창에서 전송버튼 클릭
+	$('#wsend').on('click', function(){
+		indata = $('#wform').serializeJSON();
+		writerServer();
+		$('#wclose').trigger("click");
+		$('#wModal .txt').val("");
+	})
+	
+	// 수정, 삭제, 등록 버튼 / 제목 클릭 / 댓글 삭제, 수정
+	$(document).on('click', '.action', function(){
+		vidx = $(this).attr('idx').trim();
+		vname = $(this).attr('name');
+		
+		if(vname == "modify"){
+			alert(vidx + "번 글을 수정합니다.");
+		}else if(vname == "delete"){
+			alert(vidx + "번 글을 삭제합니다.");
+			boardDeleteServer(this);
+		}else if(vname == "reply"){
+			vrcont = $(this).prev().val();  // 댓글 버튼을 기준으로  textarea에 입력된 값을 가져옴
+		
+		// 댓글 저장하기_서버로 보냄 : cont(vrcont). bonum(vidx), name 3개의 값을 객체를 이용하여 저장함
+			reply = {}; 
+			reply.bonum = vidx;
+		
+// 		n1 = String.fromCharCode(Math.random()*26 + 65);  // 소문자
+// 		n2 = String.fromCharCode(Math.random()*26 + 97);  // 대문자
+// 		n3 = parseInt(Math.random()*100 + 1);             // 숫자
+		
+//         reply.name = n1 + n2 + n3;
+			reply.cont = vrcont;
+		
+			replySaveServer(this);   // this : 등록버튼, replyListServer에서 사용
+			$(this).prev().val("");
+		
+		}else if(vname == "list"){
+// 		// 조회수 증가
+// 		vclass = $(this).parents('.panel');
+// 		vclass2 = $(vclass).find('.panel-collapse');
+// 		vclass3 = vclass2.attr('aria-expanded');
+// 		console.log(vclass3);
+		
+// 		if(vclass3 == "true"){
+// 			hitUpdateServer(this); // 조회수 증가_서버로 전송, db에서 조회수 수정
+// 		}
+    	replyListServer(this);   // this : 제목을 나타내는 a태그
+		}else if(vname == "r_delete"){
+		// 댓글 삭제
+		replyDeleteServer(this);
+		}else if(vname == "r_modify"){
+		// 댓글 수정
+			modifycont = $(this).parents('.rep-body').find('.p3').html();  // 댓글 원본 내용 가져옴
+			modify = modifycont.replaceAll(/<br>/g, "\n");  // 댓글 원본 내용에서 br태그를 /n으로 변경
+			$('#modifyForm #text').val(modify);   // 댓글 수정폼에 댓글 내용을 출력
+			$(this).parents('.rep-body').find('.p3').empty().append($('#modifyForm'));  // 댓글수정폼을 this기준으로 p3으로 append
+			$('#modifyForm').show();
+		}
+	}) // click
+	
+	// 댓글 수정 후 확인 버튼
+	$('#btnok').on('click', function(){
+		modicont =  $('#modifyForm #text').val();  // 수정된 내요 ㅇ가져옴
+		vp3 = $('#modifyForm').parent(); // p3태그를 검색
+		
+		$('body').append($('#modifyForm')); // modifyForm을 다시 body로 이동
+		$('#modifyForm').hide();
+		modiout = modicont.replaceAll(/\n/g,"<br>"); //p3태그에 수정된 내용을 출력하기 위해서 <br>태그로 줄바꿈 처리
+		replyUpdateServer();   // db에서 내용수정_수정 성공 후 화면을 수정 vidx, modiout
+	})
+	
+	$('#btnreset').on('click', function(){  // 원래 원본내용을 다시 p3으로 출력, 수정폼modifyForm을 다시 body로 이동_append
+		replyReset();
+	})
+}) // $function
+
+replyReset = function(){
+	vp3 = $('#modifyForm').parent();
+	
+	$('body').append($('#modifyForm')); // 수정폼을 body로 이동
+	$('#modifyForm').hide();
+	vp3.html(modifycont);  // p3에 원본내용을 다시 출력함
+}
+
+</script>
+</head>
+
+<body>
+<!-- 댓글수정폼 -->
+<div id="modifyForm">
+	<textarea id="text" rows="5" cols="50"></textarea>
+	<input type="button" value="확인" id="btnok">
+	<input type="button" value="취소" id="btnreset">
+</div>
+
+<!-- a001로 로그인 테스트 -->
+<%session.setAttribute("loginMember", "a001");
+%>
+
+<%if(((String)session.getAttribute("loginMember")) != null){
+ %>
+
+   <!-- 글쓰기버튼 별도의 이벤트 없이 modal창 띄우기-->
+	<button class="btn btn-success" id="writebtn" type="button" data-toggle="modal" data-target="#wModal">문의글쓰기</button>
+	<br><br>
+<%}
+%>
+<!-- 검색하기 출력 -->
+	<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+	
+	<select class="form-control" id="stype">
+			<option value="">전체</option>
+			<option value="mem_id">작성자</option>
+			<option value="title">제목</option>
+			<option value="cont">내용</option>
+		</select>
+	
+		<form class="form-inline">
+			<input class="form-control mr-sm-2" type="text" id="sword" placeholder="검색어를 입력하세요">
+			<button id="search" class="btn btn-success" type="button">검색</button>
+		</form>
+	</nav>
+	
+	<!-- 리스트 출력부분 -->
+   <div id = "result"></div>
+   
+   <!-- 페이지네비게이션 출력 -->
+   <div id="pagenav"></div>
+   
+	   <!-- The Modal -->
+   <div class="modal" id="wModal">
+   <div class="modal-dialog">
+   <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">문의글 작성</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+         <form id="wform">
+         		<label>제목</label>
+         		<input type="text" class="txt" name="title"><br><br>
+         		
+         		<label>내용</label>
+         		<textarea rows="10" class="txt" cols="50" name="cont"></textarea>
+         		<br>
+         	<div class="modal-bottom">
+         		<input type="button" value="등록" id="wsend">
+         		<input type="button" value="닫기" id="wclose" data-dismiss="modal">
+         	</div>
+          </form>
+      </div>
+
+    </div>
+    </div>
+    </div>
+
+</body>
+</html>

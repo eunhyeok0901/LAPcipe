@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 이 문서는 iBatis에서 처리할 SQL문을 작성하는 문서입니다.. -->
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="cookClass">
+<!-- <typeAlias>는 이 곳에서 등록할 수도 있다.  -->
+	
+	
+	<select id="getClassList" resultClass="cookclassvo">
+	select class_no,
+	class_time,
+	to_char(class_price,'999,999,999,999') as class_price,
+	class_period,
+	class_man,
+	class_title,
+	class_image
+	from cookclass
+		</select>
+	
+	<select id="getSortList" parameterClass="string" resultClass="cookclassvo">
+	select 
+	a.class_no,
+	a.class_time,
+	to_char(a.class_price,'999,999,999')as class_price,
+	a.class_period,
+	a.class_man,
+	a.class_title,
+	a.class_image,
+	b.*
+
+ from cookclass a, classdetail b
+     where a.class_no=b.class_no
+     and b.DET_NAME=#data#
+	</select>
+	
+	<select id="searchMaterial" parameterClass="string" resultClass="cookclassvo">
+	
+	select 
+	a.class_no,
+	a.class_time,
+	to_char(a.class_price,'999,999,999')as class_price,
+	a.class_period,
+	a.class_man,
+	a.class_title,
+	a.class_image   ,
+	b.*
+	from cookclass a, classdetail b
+	where a.class_no=b.class_no
+	and b.det_con like '%'||#data#||'%'
+	
+	
+	</select>
+	
+	<select id="searchName" parameterClass="string" resultClass="cookclassvo">
+		select 
+		class_no,
+		class_time,
+		to_char(class_price,'999,999,999,999') as class_price,
+		class_period,
+		class_man,
+		class_title,
+		class_image
+		from COOKCLASS
+		where CLASS_TITLE like '%'||#data#||'%'
+		
+	
+	</select>
+	
+	<select id="countClass" parameterClass="buyedclassvo" resultClass="int">
+		select count(b.buyed_no)
+		from cookclass a, buyedclass b
+		where a.class_no=b.class_no
+		and b.mem_id = #mem_id#
+		and a.class_no=#class_no#
+	
+	</select>
+	
+
+	
+	
+	
+	
+</sqlMap>

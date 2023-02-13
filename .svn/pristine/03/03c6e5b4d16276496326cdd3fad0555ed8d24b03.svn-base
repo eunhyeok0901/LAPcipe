@@ -1,0 +1,222 @@
+<%@page import="bps.member.vo.MemberVO"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+	
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Insert title here</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR&display=swap');
+	
+	*{
+	font-family: 'Noto Serif KR', serif;
+	
+	}
+	
+	body{
+    background: #faf8f0;
+    }
+
+
+    table, tr, td {
+	border: 1px solid blue;
+	border-collapse: collapse;
+   }
+
+    td {
+	padding: 5px;
+    }
+    
+    .profilebtn1{
+    	width: 40%;
+    	backgroud: white;
+    }
+
+
+</style>
+
+<%
+MemberVO memVo = (MemberVO)session.getAttribute("loginMemberVO");
+%>
+
+
+
+
+</head>
+<body>
+
+	<%
+	if(memVo != null){
+	%>	
+	
+
+<form name="memberForm" id="memberForm">
+		<input type="hidden" id="mem_id" name="mem_id"
+			value="<%=memVo.getMem_id()%>">	
+			
+<div class="container-fluid" style="border:none;">
+  
+  <div style="border:none;">
+    <div class="col-sm-4" style="border:none;">
+      <div class="panel text-center" style="border:none;">
+        <div class="panel-body" style="border:none;background:#faf8f0;font-size:1.2em;">
+          <p><strong>이름: </strong><%=memVo.getMem_name()%></p>
+          <hr>
+          <p><strong>닉네임: </strong><%=memVo.getMem_nickname()%></p>
+          <hr>
+          <p><strong>전화번호: </strong><%=memVo.getMem_tel()%></p>
+          <hr>
+          <p><strong>주소: </strong><%=memVo.getMem_add()%></p>
+          <hr>
+          <p><strong>이메일: </strong><%=memVo.getMem_email()%></p>
+          <hr>
+          <p><strong>보유포인트: </strong><%=memVo.getMem_point()%></p>
+          <hr>
+          <input class="profilebtn1" id="btnAmend" type="button" value="회원정보 수정" data-toggle="modal" data-target="#checkPw">
+	      <input class="profilebtn1" id="btnDelete" type="button" value="회원 탈퇴" data-toggle="modal" data-target="#checkPw2">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</form>	
+	
+	<!-- 회원정보 수정 시 비밀번호 입력 modal -->
+   <div class="modal fade" id="checkPw">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-body" style="margin: 20px;">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h3 class="modal-title" style="text-align: center;"><b>비밀번호 입력</b></h3><br>
+          <br>
+          
+  		
+          <div style="text-align: center;">
+             <input type="password" name="checkPw" id="cPw" class="text_field" placeholder="비밀번호" required
+             style=" border:none; border-bottom: solid 1px #ccc;
+             border-radius: 30px; padding: 8px 0px 5px 10px; margin-bottom:8px;
+             width: 60%; height:45px;">
+          </div>
+			
+		  <div style= "width: 55%; text-align:center; margin-left: 120px;">
+			  <div class="alert alert-danger" id="alert-danger3">
+			  	비밀번호가 일치하지 않습니다
+			  </div>
+		  </div>
+		  	
+          <div id="recheckPw" style="text-align: center;">
+            <button type="button" id="submitPw"
+            style="width: 60%; height: 50px; border: none; border-bottom: 1px solid #ccc; outline:none; border-radius: 40px;
+            background:#8C8CBE;
+            color: white; font-size: 1.2em; letter-spacing: 2px; margin-bottom: 20px; font-weight: bold;">
+          	확인</button>
+          </div>
+        
+        </div>
+        
+      </div>
+      
+    </div>
+  </div>
+
+  
+	<!-- 회원 탈퇴 시 비밀번호 입력 modal -->
+   <div class="modal fade" id="checkPw2">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-body" style="margin: 20px;">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h3 class="modal-title" style="text-align: center;"><b>비밀번호 입력</b></h3><br>
+          <br>
+          
+  		
+          <div style="text-align: center;">
+             <input type="password" name="checkPw" id="cPw2" class="text_field" placeholder="비밀번호" required
+             style=" border:none; border-bottom: solid 1px #ccc;
+             border-radius: 30px; padding: 8px 0px 5px 10px; margin-bottom:8px;
+             width: 60%; height:45px;">
+          </div>
+			
+		  <div style= "width: 55%; text-align:center; margin-left: 120px;">
+			  <div class="alert alert-danger" id="alert-danger4">
+			  	비밀번호가 일치하지 않습니다
+			  </div>
+		  </div>
+		  	
+          <div id="recheckPw" style="text-align: center;">
+            <button type="button" id="submitPw2"
+            style="width: 60%; height: 50px; border: none; border-bottom: 1px solid #ccc; outline:none; border-radius: 40px;
+            background:#8C8CBE;
+            color: white; font-size: 1.2em; letter-spacing: 2px; margin-bottom: 20px; font-weight: bold;">
+          	확인</button>
+          </div>
+        
+        </div>
+        
+      </div>
+      
+    </div>
+  </div>
+	
+	
+<%}%>
+	
+	
+<script>
+$('#alert-danger3').hide();
+
+$('#submitPw').on("click", function(){
+	
+    var pass = $('#cPw').val();
+	if(pass == '<%=memVo.getMem_pass()%>'){
+		location.href="<%=request.getContextPath()%>/member/memberUpdateForm.jsp";
+	
+	}else{
+			$('#alert-danger3').show();
+		$('#cPw').val('');
+	}
+	
+	
+})
+
+$('#alert-danger4').hide();
+
+$('#submitPw2').on("click", function(){
+	
+    var pass = $('#cPw2').val();
+	
+	if(pass == '<%=memVo.getMem_pass()%>'){
+		var form = document.getElementById("memberForm");
+		
+		form.action = "<%=request.getContextPath()%>/memberDelete.do";
+		form.submit();
+	}else{
+		$('#alert-danger4').show();
+		$('#cPw2').val('');
+	}
+	
+	
+})
+</script>
+	
+	
+	
+	
+		
+</body>
+</html>

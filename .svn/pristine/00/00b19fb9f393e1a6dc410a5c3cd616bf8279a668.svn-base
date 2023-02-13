@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="classreview">
+	
+<!-- 	별점 -->
+
+	<select id="getReview" parameterClass="int" resultClass="classreviewvo">
+		select * from classreview
+		where class_no=#data#
+	</select>
+	
+	<select id="getClassNo" parameterClass="String" resultClass="classreviewvo">
+		select class_no 
+		from classreview 
+		where mem_id=#data#
+	</select>
+	
+	
+<!-- 	<select id="registerClass" parameterClass="String" resultClass="reviewvo"> -->
+<!-- 		select distinct a.class_no, b.* -->
+<!-- 		from classreview a ,cookclass b -->
+<!-- 		where a.class_no=b.class_no  -->
+<!-- 		 and mem_id=#data# -->
+<!-- 	</select> -->
+
+
+	
+	<select id="registerClass" parameterClass="String" resultClass="reviewvo">
+		select distinct a.class_no, b.*
+		from classreview a ,cookclass b
+		where a.class_no=b.class_no 
+		 and mem_id=#data#
+	</select>
+
+
+	
+	<update id="insertReview" parameterClass="classreviewvo">
+	insert INTO classreview
+	VALUES (CREVIEW_SEQ.NEXTVAL,SYSDATE,#crev_con#,#crev_score#,#mem_id#,#class_no#)
+	</update>
+	
+	<select id="countReview" parameterClass="classreviewvo" resultClass="int">
+	select count(CREV_NO)
+	from CLASSREVIEW
+	where mem_id=#mem_id# and class_no=#class_no#
+	
+	</select>
+	
+	
+<!-- 	<select id="getReviewCon" parameterClass="classreviewvo" resultClass="classreviewvo"> -->
+<!-- 	select * -->
+<!-- 	from classReview -->
+<!-- 	where class_no=#class_no# and mem_id=#mem_id=# -->
+<!-- 	</select> -->
+
+
+<select id="getReviewCon" parameterClass="classreviewvo" resultClass="String">
+	    select CREV_COn
+		from CLASSREVIEW
+		where mem_id=#mem_id# and class_no=#class_no#
+
+</select>
+
+
+	<update id="insertNewCon" parameterClass="classreviewvo">
+	
+	update classreview set crev_con=#crev_con# where mem_id=#mem_id# and class_no=#class_no#
+	
+	</update>
+	
+	
+
+</sqlMap>

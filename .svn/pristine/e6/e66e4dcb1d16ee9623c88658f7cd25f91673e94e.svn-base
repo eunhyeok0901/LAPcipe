@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+    
+<sqlMap namespace="buyedclass">
+<select id="getAllBuyedClass" resultClass="buyedclassvo">
+	select * from buyedclass
+</select>
+
+
+		<!--  vo확인 -->
+	<select id="registeredClass" parameterClass="String" resultClass="buyedvo">
+		select distinct(a.class_no), b.class_title
+		from buyedclass a, cookclass b
+		where a.class_no=b.class_no
+		and a.mem_id=#mem_id#
+	</select>
+</sqlMap>

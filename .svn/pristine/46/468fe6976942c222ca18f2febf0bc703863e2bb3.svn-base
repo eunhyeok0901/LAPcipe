@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 이 문서는 iBatis에서 처리할 SQL문을 작성하는 문서입니다.. -->
+<!DOCTYPE sqlMap
+	PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="cookway">
+<!-- <typeAlias>는 이 곳에서 등록할 수도 있다.  -->
+	<insert id="cookwayInsert" parameterClass="cookwayvo">
+		<selectKey keyProperty="id" resultClass="int">
+			select recipe_seq.currval as id from dual 
+		</selectKey>
+		insert into cookingway values(cookingway_seq.nextval, #cook_image#, #cook_con#, #id#, #cook_index#)
+	</insert>
+	
+	<select id="getSomeCookway" parameterClass="int" resultClass="cookwayvo">
+		select * from cookingway
+		where rec_no = #rec_no#
+		order by cook_index asc
+	</select>
+	
+	
+	
+</sqlMap>

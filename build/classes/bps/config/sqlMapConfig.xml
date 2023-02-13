@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 이 문서는 iBatis의 환경 설정용 파일입니다. -->
+<!DOCTYPE sqlMapConfig
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+    <sqlMapConfig>
+
+        <!-- DB와 연결할 때 사용할 정보가 저장된 properties 파일의 위치를 설정한다 -->
+        <properties resource="bps/config/dbinfo.properties"/>
+
+        <!-- 각각의 sqlMap파일의 nameSpace와 id 속성값을 연결해서 실행할 쿼리문을 선택할수 있게 설정한다. -->
+        <settings useStatementNamespaces="true"/>
+
+        <!-- 쿼리문에 사용VO객체는 패키지 이름을 포함한 전체이름을 사용해야 한다
+             그런데 이렇게 되면 문장이 길어질 수 있기 때문에 전체 이름을 대신할 alias를 설정할 수 있다.
+             형식) <typeAlias alias="alias명" type="클래스의 전체이름"/>
+         -->
+        <typeAlias alias="wishlistvo" type="bps.wishlist.vo.WishListVO"/>
+        <typeAlias alias="notevo" type="bps.recipenote.vo.RecipeNoteVO"/>
+        <typeAlias alias="ingrevo" type="bps.ingredient.vo.IngrediVO"/>
+        <typeAlias alias="ingvo" type="bps.ingreunit.vo.IngreunitVO"/>
+		<typeAlias alias="recipevo" type="bps.recipe.vo.RecipeVO"/>
+		<typeAlias alias="tagvo" type="bps.tag.vo.TagVO"/>
+		<typeAlias alias="use_foodvo" type="bps.use_food.vo.Use_foodVO"/>
+		<typeAlias alias="cookwayvo" type="bps.cookway.vo.CookwayVO"/>
+		<typeAlias alias="recipereviewvo" type="bps.recipereview.vo.RecipeReviewVO"/>
+		<typeAlias alias="post_recipevo" type="bps.postrecipe.vo.PostRecipeVO"/>
+		<typeAlias alias="buyedclassvo" type="bps.buyedclass.vo.BuyedClassVO"/>
+		<typeAlias alias="cookclassvo" type="bps.cookclass.vo.CookClassVO"/>
+		<typeAlias alias="paymentvo" type="bps.payment.vo.PaymentVO"/>
+		<typeAlias alias="refundvo" type="bps.refund.vo.RefundVO"/>
+		<typeAlias alias="classdetailvo" type="bps.classdetail.vo.ClassDetailVO"/>
+		<typeAlias alias="detailvo" type="bps.classdetail.vo.DetailVO"/>
+		<typeAlias alias="memberVO" type="bps.member.vo.MemberVO"/>
+		<typeAlias alias="classreviewvo" type="bps.classreview.vo.ClassReviewVO"/>
+		<typeAlias alias="curriculumvo" type="bps.curriculum.vo.CurriculumVO"/>
+		<typeAlias alias="reviewvo" type="bps.classreview.vo.ReviewVO"/>
+		<typeAlias alias="boardvo" type="bps.board.vo.BoardVO"/>
+		<typeAlias alias="replyvo" type="bps.board.vo.ReplyVO"/>
+		<typeAlias alias="pagevo" type="bps.board.vo.PageVO"/>
+		<typeAlias alias="buyedvo" type="bps.buyedclass.vo.BuyedVO"/>
+		
+		
+		
+		
+		
+<!-- 		<typeAlias alias="boardvo" type="bps.board.vo.BoardVO"/> -->
+<!-- 		<typeAlias alias="replyvo" type="bps.board.vo.ReplyVO"/> -->
+<!-- 		<typeAlias alias="pagevo" type="bps.board.vo.PageVO"/> -->
+
+		
+		
+         <!-- DB와 연결을 처리하는 부분 -->
+         
+         <transactionManager type="JDBC">
+            <dataSource type="SIMPLE">
+                <property name="JDBC.Driver" value="${driver}"/>
+                <property name="JDBC.ConnectionURL" value="${url}"/>
+                <property name="JDBC.Username" value="${user}"/>
+                <property name="JDBC.Password" value="${pass}"/>
+            </dataSource>
+            </transactionManager>
+            <!-- 
+                실행할 SQL문은 xml문서로 따로 만든 후 그 xml문서를 등록하여 사용한다.
+                등록형식) <sqlMap resource="경로명/파일명.xml"/>
+             -->
+           	 <sqlMap resource="bps/mapper/ingredient.xml"/>
+           	 <sqlMap resource="bps/mapper/ingre_unit.xml"/>
+			 <sqlMap resource="bps/mapper/cookway.xml"/>
+			 <sqlMap resource="bps/mapper/recipe.xml"/>
+			 <sqlMap resource="bps/mapper/tag.xml"/>
+			 <sqlMap resource="bps/mapper/use_food.xml"/>
+			 <sqlMap resource="bps/mapper/recipereview.xml"/>             
+			 <sqlMap resource="bps/mapper/post_recipe.xml"/>             
+			 <sqlMap resource="bps/mapper/payment.xml"/>             
+			 <sqlMap resource="bps/mapper/buyedclass.xml"/>             
+			 <sqlMap resource="bps/mapper/refund.xml"/>             
+			 <sqlMap resource="bps/mapper/cookclass.xml"/>             
+			 <sqlMap resource="bps/mapper/wishlist.xml"/>             
+			 <sqlMap resource="bps/mapper/classdetail.xml"/>             
+			 <sqlMap resource="bps/mapper/recipenote.xml"/>    
+			 <sqlMap resource="bps/mapper/member.xml"/>        
+			 <sqlMap resource="bps/mapper/classreview.xml"/>             
+			 <sqlMap resource="bps/mapper/curriculum.xml"/>
+			 <sqlMap resource="bps/mapper/board.xml"/>               
+			 
+<!-- 			 <sqlMap resource="bps/mapper/member.xml"/>          -->
+<!-- 			 <sqlMap resource="bps/mapper/board.xml"/>         -->
+<!-- 			 <sqlMap resource="bps/mapper/classreview.xml"/>              -->
+			           
+    </sqlMapConfig>
